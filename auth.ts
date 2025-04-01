@@ -1,8 +1,8 @@
 import NextAuth from 'next-auth';
 import GitHub from 'next-auth/providers/github';
-import { client } from './sanity/lib/client';
-import { AUTHOR_BY_GITHUB_ID_QUERY } from './sanity/lib/queries';
-import { writeClient } from './sanity/lib/write-client';
+import { AUTHOR_BY_GITHUB_ID_QUERY } from '@/sanity/lib/queries';
+import { client } from '@/sanity/lib/client';
+import { writeClient } from '@/sanity/lib/write-client';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
     providers: [GitHub],
@@ -20,11 +20,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             if (!existingUser) {
                 await writeClient.create({
                     _type: 'author',
-                    id: id,
-                    name: name,
+                    id,
+                    name,
                     username: login,
-                    email: email,
-                    image: image,
+                    email,
+                    image,
                     bio: bio || '',
                 });
             }
@@ -38,9 +38,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                         id: profile?.id,
                     });
 
-                if (!user) {
-                    token.id = user?._id;
-                }
+                token.id = user?._id;
             }
             return token;
         },
